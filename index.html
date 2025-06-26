@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SMB AI Advisor</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    h1 { color: #2c3e50; }
+    textarea {
+      width: 100%; padding: 10px; margin: 10px 0;
+      border: 1px solid #ccc; border-radius: 4px;
+    }
+    button {
+      background-color: #007bff; color: white; border: none;
+      padding: 10px 20px; border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover { background-color: #0056b3; }
+    .response { margin-top: 20px; background: #f8f9fa; padding: 15px; border-radius: 4px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>SMB AI Advisor</h1>
+  <p>Describe your business. Our AI will provide custom AI strategies tailored to your industry.</p>
+  <textarea id="userInput" rows="6" placeholder="e.g., I run a local accounting firm..."></textarea>
+  <button onclick="askAI()">Get AI Strategies</button>
+  <div class="response" id="responseBox"></div>
+
+  <script>
+    async function askAI() {
+      const userInput = document.getElementById('userInput').value.trim();
+      const responseBox = document.getElementById('responseBox');
+      if (!userInput) {
+        responseBox.innerHTML = "Please enter a description of your business.";
+        return;
+      }
+
+      responseBox.innerHTML = "Thinking...";
+
+      try {
+        const res = await fetch("https://long-glade-fb27.markjsandefur.workers.dev/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: userInput })
+        });
+
+        const data = await res.json();
+        responseBox.innerHTML = data.reply || "Sorry, something went wrong.";
+      } catch (error) {
+        responseBox.innerHTML = "Error contacting AI service.";
+      }
+    }
+  </script>
+</body>
+</html>
