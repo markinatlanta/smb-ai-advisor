@@ -24,13 +24,14 @@
   <h1>SMB AI Advisor</h1>
   <p>Describe your business. Our AI will provide custom AI strategies tailored to your industry.</p>
   <textarea id="userInput" rows="6" placeholder="e.g., I run a local accounting firm..."></textarea>
-  <button onclick="askAI()">Get AI Strategies</button>
+  <button id="submitBtn">Get AI Strategies</button>
   <div class="response" id="responseBox"></div>
 
   <script>
-    async function askAI() {
-      const userInput = document.getElementById('userInput').value.trim();
-      const responseBox = document.getElementById('responseBox');
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const userInput = document.getElementById("userInput").value.trim();
+      const responseBox = document.getElementById("responseBox");
+
       if (!userInput) {
         responseBox.innerHTML = "Please enter a description of your business.";
         return;
@@ -41,16 +42,23 @@
       try {
         const res = await fetch("https://long-glade-fb27.markjsandefur.workers.dev/", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({ prompt: userInput })
         });
 
+        if (!res.ok) {
+          throw new Error(`Server responded with ${res.status}`);
+        }
+
         const data = await res.json();
-        responseBox.innerHTML = data.reply || "Sorry, something went wrong.";
+        responseBox.innerHTML = data.reply || "No response received.";
       } catch (error) {
-        responseBox.innerHTML = "Error contacting AI service.";
+        responseBox.innerHTML = "Error contacting AI service: " + error.message;
       }
-    }
+    });
   </script>
 </body>
 </html>
+
